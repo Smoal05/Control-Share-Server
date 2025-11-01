@@ -1,0 +1,73 @@
+body {
+  font-family: "Cairo", sans-serif;
+  background: #0d1117;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+#login, #chat {
+  background: #161b22;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 0 10px #000;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+}
+
+h2 a {
+  color: #58a6ff;
+  text-decoration: none;
+}
+
+input {
+  width: 90%;
+  padding: 10px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 8px;
+  outline: none;
+}
+
+button {
+  padding: 10px 20px;
+  background: #238636;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  margin: 5px;
+}
+
+#messages {
+  height: 300px;
+  overflow-y: auto;
+  border: 1px solid #30363d;
+  padding: 10px;
+  background: #0d1117;
+  text-align: left;
+}
+
+.message {
+  background: #21262d;
+  padding: 8px;
+  border-radius: 8px;
+  margin: 5px 0;
+  position: relative;
+}
+
+.copy-btn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: #444c56;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 12px;
+}

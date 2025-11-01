@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tunnel Chat - Smoal Developer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="login">
+    <h2><a href="https://smoal.dev" target="_blank">Smoal Developer</a></h2>
+    <input id="tunnel_name" type="text" placeholder="اسم النفق">
+    <input id="password" type="password" placeholder="كلمة السر">
+    <div class="buttons">
+      <button onclick="login(1)">الجهاز 1</button>
+      <button onclick="login(2)">الجهاز 2</button>
+    </div>
+  </div>
+
+  <div id="chat" style="display:none;">
+    <div id="messages"></div>
+    <div class="input-area">
+      <input id="message_input" type="text" placeholder="اكتب رسالتك...">
+      <button onclick="sendMessage()">إرسال</button>
+      <button onclick="updateChat()">تحديث</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
