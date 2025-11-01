@@ -57,7 +57,6 @@
             padding: 30px;
         }
         
-        /* تصميم نموذج التسجيل */
         .login-form {
             display: flex;
             flex-direction: column;
@@ -124,7 +123,6 @@
             box-shadow: 0 4px 10px rgba(76, 175, 80, 0.4);
         }
         
-        /* تصميم واجهة الدردشة */
         .chat-container {
             display: none;
             flex-direction: column;
@@ -346,7 +344,6 @@
         </div>
         
         <div class="content">
-            <!-- نموذج تسجيل الدخول -->
             <div class="login-form" id="loginForm">
                 <div class="form-group">
                     <label for="tunnelName">اسم النفق</label>
@@ -375,7 +372,6 @@
                 </button>
             </div>
             
-            <!-- واجهة الدردشة -->
             <div class="chat-container" id="chatContainer">
                 <div class="chat-header">
                     <div class="tunnel-info">
@@ -424,179 +420,3 @@
         
         // متغيرات التطبيق
         let currentTunnel = '';
-        let currentPassword = '';
-        let currentDevice = 1;
-        let messageInterval;
-        const SERVER_URL = 'https://share-server-va1d.onrender.com';
-        
-        // تهيئة الأحداث
-        device1Btn.addEventListener('click', () => selectDevice(1));
-        device2Btn.addEventListener('click', () => selectDevice(2));
-        connectBtn.addEventListener('click', connectToTunnel);
-        sendBtn.addEventListener('click', sendMessage);
-        refreshBtn.addEventListener('click', loadMessages);
-        messageInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') sendMessage();
-        });
-        
-        // اختيار الجهاز
-        function selectDevice(device) {
-            currentDevice = device;
-            device1Btn.classList.toggle('active', device === 1);
-            device2Btn.classList.toggle('active', device === 2);
-        }
-        
-        // الاتصال بالنفق
-        async function connectToTunnel() {
-            const tunnelName = tunnelNameInput.value.trim();
-            const password = passwordInput.value.trim();
-            
-            if (!tunnelName || !password) {
-                showNotification('يرجى ملء جميع الحقول', 'error');
-                return;
-            }
-            
-            try {
-                const response = await fetch(`${SERVER_URL}/connect`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        tunnel: tunnelName,
-                        password: password,
-                        device: currentDevice
-                    })
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    currentTunnel = tunnelName;
-                    currentPassword = password;
-                    
-                    // تحديث واجهة الدردشة
-                    currentTunnelName.textContent = `النفق: ${tunnelName}`;
-                    currentDeviceBadge.textContent = `الجهاز ${currentDevice}`;
-                    currentDeviceBadge.className = `device-badge device-${currentDevice}`;
-                    
-                    // الانتقال إلى واجهة الدردشة
-                    loginForm.style.display = 'none';
-                    chatContainer.style.display = 'flex';
-                    
-                    // بدء تحميل الرسائل تلقائياً
-                    loadMessages();
-                    messageInterval = setInterval(loadMessages, 3000); // تحديث كل 3 ثواني
-                    
-                    showNotification('تم الاتصال بنجاح!', 'success');
-                } else {
-                    showNotification(data.message || 'فشل الاتصال', 'error');
-                }
-            } catch (error) {
-                console.error('Error connecting to tunnel:', error);
-                showNotification('خطأ في الاتصال بالسيرفر', 'error');
-            }
-        }
-        
-        // إرسال رسالة
-        async function sendMessage() {
-            const message = messageInput.value.trim();
-            
-            if (!message) {
-                showNotification('يرجى كتابة رسالة', 'error');
-                return;
-            }
-            
-            try {
-                const response = await fetch(`${SERVER_URL}/send`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        tunnel: currentTunnel,
-                        device: currentDevice,
-                        message: message
-                    })
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    messageInput.value = '';
-                    loadMessages(); // تحديث الرسائل فوراً بعد الإرسال
-                } else {
-                    showNotification('فشل إرسال الرسالة', 'error');
-                }
-            } catch (error) {
-                console.error('Error sending message:', error);
-                showNotification('خطأ في إرسال الرسالة', 'error');
-            }
-        }
-        
-        // تحميل الرسائل
-        async function loadMessages() {
-            if (!currentTunnel) return;
-            
-            try {
-                const response = await fetch(`${SERVER_URL}/messages?tunnel=${currentTunnel}`);
-                const data = await response.json();
-                
-                // مسح الرسائل الحالية
-                messagesContainer.innerHTML = '';
-                
-                // عرض الرسائل الجديدة
-                data.messages.forEach(msg => {
-                    const messageElement = document.createElement('div');
-                    messageElement.className = `message device-${msg.device}`;
-                    
-                    const messageText = document.createElement('div');
-                    messageText.className = 'message-text';
-                    messageText.textContent = msg.text;
-                    
-                    const messageTime = document.createElement('div');
-                    messageTime.className = 'message-time';
-                    messageTime.textContent = new Date().toLocaleTimeString('ar-SA', { 
-                        hour: '2-digit', 
-                        minute: '2-digit' 
-                    });
-                    
-                    const copyBtn = document.createElement('button');
-                    copyBtn.className = 'copy-btn';
-                    copyBtn.innerHTML = '📋';
-                    copyBtn.title = 'نسخ الرسالة';
-                    copyBtn.addEventListener('click', () => {
-                        navigator.clipboard.writeText(msg.text)
-                            .then(() => showNotification('تم نسخ الرسالة', 'success'))
-                            .catch(() => showNotification('فشل نسخ الرسالة', 'error'));
-                    });
-                    
-                    messageElement.appendChild(copyBtn);
-                    messageElement.appendChild(messageText);
-                    messageElement.appendChild(messageTime);
-                    messagesContainer.appendChild(messageElement);
-                });
-                
-                // التمرير لأسفل لعرض أحدث الرسائل
-                messagesContainer.scrollTop = messagesContainer.scrollHeight;
-            } catch (error) {
-                console.error('Error loading messages:', error);
-            }
-        }
-        
-        // عرض الإشعارات
-        function showNotification(text, type) {
-            notification.textContent = text;
-            notification.className = `notification ${type}`;
-            notification.classList.add('show');
-            
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
-        }
-        
-        // تهيئة التطبيق
-        selectDevice(1);
-    </script>
-</body>
-</html>
