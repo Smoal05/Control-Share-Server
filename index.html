@@ -143,6 +143,7 @@
             color: white;
             box-shadow: 0 1px 3px rgba(0,0,0,0.3);
             border-bottom: 1px solid rgba(255,255,255,0.1);
+            flex-shrink: 0;
         }
         
         .tunnel-info {
@@ -184,6 +185,29 @@
             display: flex;
             flex-direction: column;
             gap: 8px;
+            position: relative;
+        }
+        
+        .new-messages-indicator {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #4A235A;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            display: none;
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+        
+        .new-messages-indicator:hover {
+            background: #6C3483;
+            transform: translateX(-50%) scale(1.05);
         }
         
         .message {
@@ -214,6 +238,9 @@
             line-height: 1.4;
             white-space: pre-wrap;
             font-size: 14px;
+            font-family: 'Courier New', monospace;
+            text-align: left;
+            direction: ltr;
         }
         
         .message-time {
@@ -253,6 +280,7 @@
             background: rgba(12, 20, 69, 0.9);
             align-items: center;
             border-top: 1px solid rgba(255,255,255,0.1);
+            flex-shrink: 0;
         }
         
         .message-input {
@@ -264,6 +292,12 @@
             color: white;
             font-size: 14px;
             outline: none;
+            resize: none;
+            min-height: 20px;
+            max-height: 120px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            line-height: 1.4;
         }
         
         .message-input::placeholder {
@@ -284,6 +318,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-shrink: 0;
         }
         
         .send-btn:hover {
@@ -412,11 +447,15 @@
         </div>
         
         <div class="messages-container" id="messagesContainer">
+            <!-- مؤشر الرسائل الجديدة -->
+            <div class="new-messages-indicator" id="newMessagesIndicator">
+                رسائل جديدة ↓
+            </div>
             <!-- الرسائل ستحمل من السيرفر -->
         </div>
         
         <div class="message-input-container">
-            <input type="text" class="message-input" id="messageInput" placeholder="اكتب رسالتك هنا...">
+            <textarea class="message-input" id="messageInput" placeholder="اكتب رسالتك هنا..."></textarea>
             <button class="send-btn" id="sendBtn">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="22" y1="2" x2="11" y2="13"></line>
@@ -448,10 +487,13 @@
         const sendBtn = document.getElementById('sendBtn');
         const refreshBtn = document.getElementById('refreshBtn');
         const notification = document.getElementById('notification');
+        const newMessagesIndicator = document.getElementById('newMessagesIndicator');
 
         let currentDevice = 1;
         let currentTunnel = '';
         let messageInterval;
+        let lastMessageCount = 0;
+        let isUserAtBottom = true;
         const SERVER_URL = 'https://share-server-va1d.onrender.com';
 
         // الأحداث
@@ -459,13 +501,42 @@
         device2Btn.addEventListener('click', () => selectDevice(2));
         connectBtn.addEventListener('click', connectToTunnel);
         sendBtn.addEventListener('click', sendMessage);
-        refreshBtn.addEventListener('click', loadMessages);
+        refreshBtn.addEventListener('click', () => {
+            loadMessages(true); // تحديث قسري مع التمرير للأسفل
+        });
         
-        // إرسال الرسالة عند الضغط على Enter
-        messageInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
+        // إرسال الرسالة عند الضغط على Enter (بدون Shift)
+        messageInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
                 sendMessage();
             }
+        });
+
+        // ضبط ارتفاع textarea تلقائياً
+        messageInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+
+        // تتبع التمرير لتحديد ما إذا كان المستخدم في الأسفل
+        messagesContainer.addEventListener('scroll', () => {
+            const threshold = 100; // مسافة بالبكسل من الأسفل تعتبر "في الأسفل"
+            const position = messagesContainer.scrollTop + messagesContainer.clientHeight;
+            const height = messagesContainer.scrollHeight;
+            
+            isUserAtBottom = position >= height - threshold;
+            
+            // إخفاء مؤشر الرسائل الجديدة إذا كان المستخدم في الأسفل
+            if (isUserAtBottom) {
+                newMessagesIndicator.style.display = 'none';
+            }
+        });
+
+        // النقر على مؤشر الرسائل الجديدة للتمرير للأسفل
+        newMessagesIndicator.addEventListener('click', () => {
+            scrollToBottom();
+            newMessagesIndicator.style.display = 'none';
         });
 
         // اختيار الجهاز
@@ -529,8 +600,10 @@
                     chatInterface.style.display = 'flex';
                     
                     // تحميل الرسائل وبدء التحديث التلقائي
-                    loadMessages();
-                    messageInterval = setInterval(loadMessages, 2000);
+                    loadMessages(true);
+                    messageInterval = setInterval(() => {
+                        loadMessages(false); // تحديث خلفي بدون إزعاج
+                    }, 2000);
                     
                 } else {
                     showNotification(data.message || 'فشل الاتصال', 'error');
@@ -581,7 +654,8 @@
 
                 if (data.success) {
                     messageInput.value = '';
-                    loadMessages(); // تحديث الرسائل فوراً
+                    messageInput.style.height = 'auto';
+                    loadMessages(true); // تحديث مع التمرير للأسفل بعد إرسال رسالة
                 } else {
                     showNotification('فشل إرسال الرسالة', 'error');
                 }
@@ -596,7 +670,7 @@
         }
 
         // تحميل الرسائل
-        async function loadMessages() {
+        async function loadMessages(forceScroll = false) {
             if (!currentTunnel) return;
 
             try {
@@ -605,8 +679,24 @@
                 
                 console.log("📥 الرسائل المستلمة:", data.messages);
 
+                // التحقق مما إذا كانت هناك رسائل جديدة
+                const currentMessageCount = data.messages ? data.messages.length : 0;
+                const hasNewMessages = currentMessageCount > lastMessageCount;
+                
+                // إذا كانت هناك رسائل جديدة والمستخدم ليس في الأسفل، عرض المؤشر
+                if (hasNewMessages && !isUserAtBottom && !forceScroll) {
+                    newMessagesIndicator.style.display = 'block';
+                    newMessagesIndicator.textContent = `${currentMessageCount - lastMessageCount} رسالة جديدة ↓`;
+                }
+                
+                // تحديث عدد الرسائل السابق
+                lastMessageCount = currentMessageCount;
+
                 // مسح الرسائل القديمة
                 messagesContainer.innerHTML = '';
+
+                // إعادة إضافة مؤشر الرسائل الجديدة
+                messagesContainer.appendChild(newMessagesIndicator);
 
                 // عرض الرسائل الجديدة
                 if (data.messages && data.messages.length > 0) {
@@ -641,8 +731,10 @@
                         messagesContainer.appendChild(messageElement);
                     });
 
-                    // التمرير لأسفل
-                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                    // التمرير لأسفل فقط إذا كان مطلوباً أو إذا كان المستخدم في الأسفل
+                    if (forceScroll || isUserAtBottom) {
+                        scrollToBottom();
+                    }
                 } else {
                     // عرض رسالة إذا لم توجد رسائل
                     const noMessages = document.createElement('div');
@@ -656,6 +748,13 @@
             } catch (error) {
                 console.error('❌ خطأ في تحميل الرسائل:', error);
             }
+        }
+
+        // التمرير إلى أسفل المحادثة
+        function scrollToBottom() {
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            isUserAtBottom = true;
+            newMessagesIndicator.style.display = 'none';
         }
 
         // وظيفة عرض الإشعارات
