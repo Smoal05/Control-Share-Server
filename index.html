@@ -20,6 +20,7 @@
             justify-content: center;
             align-items: center;
             padding: 20px;
+            position: relative;
         }
         
         .container {
@@ -115,18 +116,33 @@
             transform: translateY(-2px);
         }
         
-        .chat-container {
+        /* واجهة الدردشة الجديدة - خلفية فضاء */
+        .chat-interface {
             display: none;
             flex-direction: column;
-            height: 500px;
+            height: 100vh;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background: #0c1445;
+            background-image: 
+                radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 4px),
+                radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 3px),
+                radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 4px);
+            background-size: 550px 550px, 350px 350px, 250px 250px;
+            background-position: 0 0, 40px 60px, 130px 270px;
         }
         
         .chat-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 20px;
-            background: rgba(0, 0, 0, 0.2);
+            padding: 10px 16px;
+            background: rgba(12, 20, 69, 0.9);
+            color: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
         }
         
         .tunnel-info {
@@ -136,22 +152,15 @@
         }
         
         .device-badge {
-            padding: 5px 15px;
+            padding: 4px 12px;
             border-radius: 20px;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             font-weight: 600;
-        }
-        
-        .device-1 {
-            background: #4CAF50;
-        }
-        
-        .device-2 {
-            background: #2196F3;
+            background: #4A235A;
         }
         
         .refresh-btn {
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.2);
             border: none;
             border-radius: 50%;
             width: 40px;
@@ -165,67 +174,72 @@
         }
         
         .refresh-btn:hover {
-            background: rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.3);
         }
         
         .messages-container {
             flex: 1;
             overflow-y: auto;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.1);
+            padding: 10px;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 8px;
         }
         
         .message {
-            max-width: 80%;
-            padding: 12px 15px;
-            border-radius: 15px;
+            max-width: 70%;
+            padding: 8px 12px;
+            border-radius: 8px;
             position: relative;
             word-wrap: break-word;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
         
         .message.device-1 {
             align-self: flex-end;
-            background: rgba(76, 175, 80, 0.3);
-            border-bottom-right-radius: 5px;
+            background: #2ECC71;
+            color: #fff;
+            border-bottom-right-radius: 2px;
         }
         
         .message.device-2 {
             align-self: flex-start;
-            background: rgba(33, 150, 243, 0.3);
-            border-bottom-left-radius: 5px;
+            background: #FF6B9D;
+            color: #fff;
+            border-bottom-left-radius: 2px;
         }
         
         .message-text {
-            margin-bottom: 5px;
+            margin-bottom: 4px;
             line-height: 1.4;
+            white-space: pre-wrap;
+            font-size: 14px;
         }
         
         .message-time {
-            font-size: 0.7rem;
-            opacity: 0.7;
+            font-size: 0.65rem;
+            opacity: 0.8;
             text-align: right;
+            margin-top: 2px;
         }
         
         .copy-btn {
             position: absolute;
-            top: 5px;
-            left: 5px;
+            top: 4px;
+            left: 4px;
             background: rgba(255, 255, 255, 0.2);
             border: none;
-            border-radius: 5px;
-            width: 25px;
-            height: 25px;
+            border-radius: 4px;
+            width: 22px;
+            height: 22px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             opacity: 0;
             transition: all 0.3s ease;
-            font-size: 0.7rem;
-            color: white;
+            font-size: 0.6rem;
+            color: #fff;
         }
         
         .message:hover .copy-btn {
@@ -235,9 +249,10 @@
         .message-input-container {
             display: flex;
             gap: 10px;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.2);
+            padding: 10px;
+            background: rgba(12, 20, 69, 0.9);
             align-items: center;
+            border-top: 1px solid rgba(255,255,255,0.1);
         }
         
         .message-input {
@@ -245,30 +260,39 @@
             padding: 12px 15px;
             border: none;
             border-radius: 20px;
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.1);
             color: white;
-            font-size: 1rem;
+            font-size: 14px;
+            outline: none;
+        }
+        
+        .message-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
         }
         
         .send-btn {
-            padding: 12px 25px;
+            padding: 12px 20px;
             border: none;
-            border-radius: 20px;
-            background: #4CAF50;
+            border-radius: 50%;
+            background: #4A235A;
             color: white;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            white-space: nowrap;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .send-btn:hover {
-            background: #45a049;
+            background: #6C3483;
             transform: scale(1.05);
         }
         
         .send-btn:disabled {
-            background: #666;
+            background: #cccccc;
             cursor: not-allowed;
             transform: none;
         }
@@ -303,9 +327,39 @@
             opacity: 0.6;
             pointer-events: none;
         }
+        
+        .footer {
+            text-align: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 20px;
+        }
+        
+        .footer p {
+            margin: 0;
+            font-weight: 500;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .developer-link {
+            color: #4CAF50;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .developer-link:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
+    <!-- واجهة التسجيل -->
     <div class="container">
         <div class="header">
             <h1>Smoal Developer</h1>
@@ -313,7 +367,6 @@
         </div>
         
         <div class="content">
-            <!-- نموذج تسجيل الدخول -->
             <div class="login-form" id="loginForm">
                 <div class="form-group">
                     <label for="tunnelName">اسم النفق</label>
@@ -338,27 +391,38 @@
                 </button>
             </div>
             
-            <!-- واجهة الدردشة -->
-            <div class="chat-container" id="chatContainer">
-                <div class="chat-header">
-                    <div class="tunnel-info">
-                        <span id="currentTunnelName">النفق: test</span>
-                        <span class="device-badge device-1" id="currentDeviceBadge">الجهاز 1</span>
-                    </div>
-                    <button class="refresh-btn" id="refreshBtn" title="تحديث المحادثة">
-                        ↻
-                    </button>
-                </div>
-                
-                <div class="messages-container" id="messagesContainer">
-                    <!-- الرسائل ستحمل من السيرفر -->
-                </div>
-                
-                <div class="message-input-container">
-                    <input type="text" class="message-input" id="messageInput" placeholder="اكتب رسالتك هنا...">
-                    <button class="send-btn" id="sendBtn">إرسال</button>
-                </div>
+            <!-- التذييل داخل واجهة التسجيل فقط -->
+            <div class="footer">
+                <p>© 2025 Powered & Developed by </p>
+                <a href="https://youtube.com/@galacticcode5?si=t3uqp0OLgBfEHa2Y" class="developer-link" target="_blank">Smoal Developer</a>
             </div>
+        </div>
+    </div>
+
+    <!-- واجهة الدردشة الجديدة -->
+    <div class="chat-interface" id="chatInterface">
+        <div class="chat-header">
+            <div class="tunnel-info">
+                <span id="currentTunnelName">النفق: test</span>
+                <span class="device-badge" id="currentDeviceBadge">الجهاز 1</span>
+            </div>
+            <button class="refresh-btn" id="refreshBtn" title="تحديث المحادثة">
+                ↻
+            </button>
+        </div>
+        
+        <div class="messages-container" id="messagesContainer">
+            <!-- الرسائل ستحمل من السيرفر -->
+        </div>
+        
+        <div class="message-input-container">
+            <input type="text" class="message-input" id="messageInput" placeholder="اكتب رسالتك هنا...">
+            <button class="send-btn" id="sendBtn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+            </button>
         </div>
     </div>
 
@@ -369,8 +433,9 @@
         console.log("✅ JavaScript يعمل!");
 
         // العناصر الأساسية
+        const container = document.querySelector('.container');
         const loginForm = document.getElementById('loginForm');
-        const chatContainer = document.getElementById('chatContainer');
+        const chatInterface = document.getElementById('chatInterface');
         const tunnelNameInput = document.getElementById('tunnelName');
         const passwordInput = document.getElementById('password');
         const device1Btn = document.getElementById('device1Btn');
@@ -412,7 +477,6 @@
             
             // تحديث الشارة فوراً
             currentDeviceBadge.textContent = `الجهاز ${device}`;
-            currentDeviceBadge.className = `device-badge device-${device}`;
         }
 
         // الاتصال بالنفق
@@ -461,8 +525,8 @@
                     currentTunnelName.textContent = `النفق: ${tunnelName}`;
                     
                     // الانتقال إلى واجهة الدردشة
-                    loginForm.style.display = 'none';
-                    chatContainer.style.display = 'flex';
+                    container.style.display = 'none';
+                    chatInterface.style.display = 'flex';
                     
                     // تحميل الرسائل وبدء التحديث التلقائي
                     loadMessages();
@@ -498,7 +562,6 @@
 
             // إظهار حالة التحميل
             sendBtn.disabled = true;
-            sendBtn.textContent = 'جاري الإرسال...';
 
             try {
                 const response = await fetch(SERVER_URL + '/send', {
@@ -529,7 +592,6 @@
             } finally {
                 // إعادة تفعيل الزر
                 sendBtn.disabled = false;
-                sendBtn.textContent = 'إرسال';
             }
         }
 
@@ -558,7 +620,10 @@
                         
                         const messageTime = document.createElement('div');
                         messageTime.className = 'message-time';
-                        messageTime.textContent = msg.timestamp || 'الآن';
+                        messageTime.textContent = msg.timestamp || new Date().toLocaleTimeString('ar-SA', { 
+                            hour: '2-digit', 
+                            minute: '2-digit' 
+                        });
                         
                         const copyBtn = document.createElement('button');
                         copyBtn.className = 'copy-btn';
