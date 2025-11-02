@@ -42,15 +42,6 @@
         .header h1 {
             font-size: 2rem;
             margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-        
-        .header p {
-            opacity: 0.8;
-            font-size: 0.9rem;
         }
         
         .content {
@@ -71,7 +62,6 @@
         
         label {
             font-weight: 500;
-            font-size: 0.9rem;
         }
         
         input {
@@ -81,13 +71,11 @@
             background: rgba(255, 255, 255, 0.15);
             color: white;
             font-size: 1rem;
-            transition: all 0.3s ease;
         }
         
         input:focus {
             outline: none;
             background: rgba(255, 255, 255, 0.25);
-            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
         }
         
         .device-buttons {
@@ -107,20 +95,24 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
         }
         
         .device-btn:hover {
             background: rgba(255, 255, 255, 0.25);
-            transform: translateY(-2px);
         }
         
         .device-btn.active {
             background: rgba(76, 175, 80, 0.7);
-            box-shadow: 0 4px 10px rgba(76, 175, 80, 0.4);
+        }
+        
+        .connect-btn {
+            background: #4CAF50 !important;
+            margin-top: 10px;
+        }
+        
+        .connect-btn:hover {
+            background: #45a049 !important;
+            transform: translateY(-2px);
         }
         
         .chat-container {
@@ -135,7 +127,6 @@
             align-items: center;
             padding: 15px 20px;
             background: rgba(0, 0, 0, 0.2);
-            border-radius: 10px 10px 0 0;
         }
         
         .tunnel-info {
@@ -145,9 +136,9 @@
         }
         
         .device-badge {
-            padding: 5px 10px;
+            padding: 5px 15px;
             border-radius: 20px;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             font-weight: 600;
         }
         
@@ -169,12 +160,12 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: all 0.3s ease;
+            color: white;
+            font-size: 1.2rem;
         }
         
         .refresh-btn:hover {
             background: rgba(255, 255, 255, 0.25);
-            transform: rotate(30deg);
         }
         
         .messages-container {
@@ -209,6 +200,7 @@
         
         .message-text {
             margin-bottom: 5px;
+            line-height: 1.4;
         }
         
         .message-time {
@@ -233,6 +225,7 @@
             opacity: 0;
             transition: all 0.3s ease;
             font-size: 0.7rem;
+            color: white;
         }
         
         .message:hover .copy-btn {
@@ -244,7 +237,7 @@
             gap: 10px;
             padding: 15px;
             background: rgba(0, 0, 0, 0.2);
-            border-radius: 0 0 10px 10px;
+            align-items: center;
         }
         
         .message-input {
@@ -258,36 +251,26 @@
         }
         
         .send-btn {
-            padding: 12px 20px;
+            padding: 12px 25px;
             border: none;
             border-radius: 20px;
-            background: rgba(76, 175, 80, 0.7);
+            background: #4CAF50;
             color: white;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
+            white-space: nowrap;
         }
         
         .send-btn:hover {
-            background: rgba(76, 175, 80, 0.9);
+            background: #45a049;
             transform: scale(1.05);
         }
         
-        .footer {
-            text-align: center;
-            padding: 15px;
-            font-size: 0.8rem;
-            opacity: 0.7;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .footer a {
-            color: #4CAF50;
-            text-decoration: none;
-        }
-        
-        .footer a:hover {
-            text-decoration: underline;
+        .send-btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
         }
         
         .notification {
@@ -301,6 +284,7 @@
             transform: translateX(150%);
             transition: transform 0.3s ease;
             z-index: 1000;
+            max-width: 300px;
         }
         
         .notification.show {
@@ -315,76 +299,59 @@
             border-left: 4px solid #f44336;
         }
         
-        @media (max-width: 600px) {
-            .container {
-                border-radius: 10px;
-            }
-            
-            .content {
-                padding: 20px;
-            }
-            
-            .device-buttons {
-                flex-direction: column;
-            }
-            
-            .message {
-                max-width: 90%;
-            }
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>
-                <span>Smoal Developer</span>
-            </h1>
-            <p>نظام الدردشة عبر الأنفاق - اربط جهازين في نفس النفق للتواصل</p>
+            <h1>Smoal Developer</h1>
+            <p>نظام الدردشة عبر الأنفاق</p>
         </div>
         
         <div class="content">
+            <!-- نموذج تسجيل الدخول -->
             <div class="login-form" id="loginForm">
                 <div class="form-group">
                     <label for="tunnelName">اسم النفق</label>
-                    <input type="text" id="tunnelName" placeholder="أدخل اسم النفق">
+                    <input type="text" id="tunnelName" placeholder="أدخل اسم النفق" value="test">
                 </div>
                 
                 <div class="form-group">
                     <label for="password">كلمة المرور</label>
-                    <input type="password" id="password" placeholder="أدخل كلمة المرور">
+                    <input type="password" id="password" placeholder="أدخل كلمة المرور" value="123">
                 </div>
                 
                 <div class="form-group">
                     <label>اختر الجهاز</label>
                     <div class="device-buttons">
-                        <button class="device-btn" id="device1Btn">
-                            <span>الجهاز 1</span>
-                        </button>
-                        <button class="device-btn" id="device2Btn">
-                            <span>الجهاز 2</span>
-                        </button>
+                        <button class="device-btn active" id="device1Btn">الجهاز 1</button>
+                        <button class="device-btn" id="device2Btn">الجهاز 2</button>
                     </div>
                 </div>
                 
-                <button class="device-btn active" id="connectBtn" style="margin-top: 10px;">
-                    <span>اتصال بالنفق</span>
+                <button class="device-btn connect-btn" id="connectBtn">
+                    اتصال بالنفق
                 </button>
             </div>
             
+            <!-- واجهة الدردشة -->
             <div class="chat-container" id="chatContainer">
                 <div class="chat-header">
                     <div class="tunnel-info">
-                        <span id="currentTunnelName">النفق: غير محدد</span>
-                        <span class="device-badge" id="currentDeviceBadge">الجهاز 1</span>
+                        <span id="currentTunnelName">النفق: test</span>
+                        <span class="device-badge device-1" id="currentDeviceBadge">الجهاز 1</span>
                     </div>
                     <button class="refresh-btn" id="refreshBtn" title="تحديث المحادثة">
-                        <span>↻</span>
+                        ↻
                     </button>
                 </div>
                 
                 <div class="messages-container" id="messagesContainer">
-                    <!-- الرسائل تظهر هنا -->
+                    <!-- الرسائل ستحمل من السيرفر -->
                 </div>
                 
                 <div class="message-input-container">
@@ -393,16 +360,15 @@
                 </div>
             </div>
         </div>
-        
-        <div class="footer">
-            <p>تم التطوير بواسطة <a href="https://smoal.dev" target="_blank">Smoal Developer</a> | جميع الرسائل يتم حذفها يوميًا الساعة 12 صباحًا</p>
-        </div>
     </div>
-    
+
     <div class="notification" id="notification"></div>
 
     <script>
-        // العناصر الأساسية في الصفحة
+        // تفعيل وضع التصحيح
+        console.log("✅ JavaScript يعمل!");
+
+        // العناصر الأساسية
         const loginForm = document.getElementById('loginForm');
         const chatContainer = document.getElementById('chatContainer');
         const tunnelNameInput = document.getElementById('tunnelName');
@@ -417,6 +383,230 @@
         const sendBtn = document.getElementById('sendBtn');
         const refreshBtn = document.getElementById('refreshBtn');
         const notification = document.getElementById('notification');
-        
-        // متغيرات التطبيق
+
+        let currentDevice = 1;
         let currentTunnel = '';
+        let messageInterval;
+        const SERVER_URL = 'https://share-server-va1d.onrender.com';
+
+        // الأحداث
+        device1Btn.addEventListener('click', () => selectDevice(1));
+        device2Btn.addEventListener('click', () => selectDevice(2));
+        connectBtn.addEventListener('click', connectToTunnel);
+        sendBtn.addEventListener('click', sendMessage);
+        refreshBtn.addEventListener('click', loadMessages);
+        
+        // إرسال الرسالة عند الضغط على Enter
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // اختيار الجهاز
+        function selectDevice(device) {
+            console.log(`تم اختيار الجهاز ${device}`);
+            currentDevice = device;
+            device1Btn.classList.toggle('active', device === 1);
+            device2Btn.classList.toggle('active', device === 2);
+            
+            // تحديث الشارة فوراً
+            currentDeviceBadge.textContent = `الجهاز ${device}`;
+            currentDeviceBadge.className = `device-badge device-${device}`;
+        }
+
+        // الاتصال بالنفق
+        async function connectToTunnel() {
+            console.log("🚀 بدء الاتصال...");
+            
+            const tunnelName = tunnelNameInput.value.trim();
+            const password = passwordInput.value.trim();
+            
+            console.log("البيانات:", { tunnelName, password, currentDevice });
+
+            if (!tunnelName || !password) {
+                showNotification('يرجى ملء جميع الحقول', 'error');
+                return;
+            }
+
+            // إظهار حالة التحميل
+            connectBtn.classList.add('loading');
+            connectBtn.textContent = 'جاري الاتصال...';
+
+            try {
+                console.log("📡 جاري إرسال طلب إلى السيرفر...");
+                
+                const response = await fetch(SERVER_URL + '/connect', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        tunnel: tunnelName,
+                        password: password,
+                        device: currentDevice
+                    })
+                });
+
+                console.log("✅ received response:", response);
+
+                const data = await response.json();
+                console.log("📊 بيانات الاستجابة:", data);
+
+                if (data.success) {
+                    currentTunnel = tunnelName;
+                    showNotification('تم الاتصال بنجاح!', 'success');
+                    
+                    // تحديث واجهة الدردشة
+                    currentTunnelName.textContent = `النفق: ${tunnelName}`;
+                    
+                    // الانتقال إلى واجهة الدردشة
+                    loginForm.style.display = 'none';
+                    chatContainer.style.display = 'flex';
+                    
+                    // تحميل الرسائل وبدء التحديث التلقائي
+                    loadMessages();
+                    messageInterval = setInterval(loadMessages, 2000);
+                    
+                } else {
+                    showNotification(data.message || 'فشل الاتصال', 'error');
+                }
+
+            } catch (error) {
+                console.error('❌ خطأ في الاتصال:', error);
+                showNotification('خطأ في الاتصال بالسيرفر: ' + error.message, 'error');
+            } finally {
+                // إخفاء حالة التحميل
+                connectBtn.classList.remove('loading');
+                connectBtn.textContent = 'اتصال بالنفق';
+            }
+        }
+
+        // إرسال رسالة
+        async function sendMessage() {
+            const message = messageInput.value.trim();
+            
+            if (!message) {
+                showNotification('يرجى كتابة رسالة', 'error');
+                return;
+            }
+
+            if (!currentTunnel) {
+                showNotification('يجب الاتصال بالنفق أولاً', 'error');
+                return;
+            }
+
+            // إظهار حالة التحميل
+            sendBtn.disabled = true;
+            sendBtn.textContent = 'جاري الإرسال...';
+
+            try {
+                const response = await fetch(SERVER_URL + '/send', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        tunnel: currentTunnel,
+                        device: currentDevice,
+                        message: message
+                    })
+                });
+
+                const data = await response.json();
+                console.log("📤 استجابة الإرسال:", data);
+
+                if (data.success) {
+                    messageInput.value = '';
+                    loadMessages(); // تحديث الرسائل فوراً
+                } else {
+                    showNotification('فشل إرسال الرسالة', 'error');
+                }
+
+            } catch (error) {
+                console.error('❌ خطأ في الإرسال:', error);
+                showNotification('خطأ في إرسال الرسالة: ' + error.message, 'error');
+            } finally {
+                // إعادة تفعيل الزر
+                sendBtn.disabled = false;
+                sendBtn.textContent = 'إرسال';
+            }
+        }
+
+        // تحميل الرسائل
+        async function loadMessages() {
+            if (!currentTunnel) return;
+
+            try {
+                const response = await fetch(`${SERVER_URL}/messages?tunnel=${currentTunnel}`);
+                const data = await response.json();
+                
+                console.log("📥 الرسائل المستلمة:", data.messages);
+
+                // مسح الرسائل القديمة
+                messagesContainer.innerHTML = '';
+
+                // عرض الرسائل الجديدة
+                if (data.messages && data.messages.length > 0) {
+                    data.messages.forEach(msg => {
+                        const messageElement = document.createElement('div');
+                        messageElement.className = `message device-${msg.device}`;
+                        
+                        const messageText = document.createElement('div');
+                        messageText.className = 'message-text';
+                        messageText.textContent = msg.text;
+                        
+                        const messageTime = document.createElement('div');
+                        messageTime.className = 'message-time';
+                        messageTime.textContent = msg.timestamp || 'الآن';
+                        
+                        const copyBtn = document.createElement('button');
+                        copyBtn.className = 'copy-btn';
+                        copyBtn.innerHTML = '📋';
+                        copyBtn.title = 'نسخ الرسالة';
+                        copyBtn.addEventListener('click', () => {
+                            navigator.clipboard.writeText(msg.text)
+                                .then(() => showNotification('تم نسخ الرسالة', 'success'))
+                                .catch(() => showNotification('فشل نسخ الرسالة', 'error'));
+                        });
+                        
+                        messageElement.appendChild(copyBtn);
+                        messageElement.appendChild(messageText);
+                        messageElement.appendChild(messageTime);
+                        messagesContainer.appendChild(messageElement);
+                    });
+
+                    // التمرير لأسفل
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                } else {
+                    // عرض رسالة إذا لم توجد رسائل
+                    const noMessages = document.createElement('div');
+                    noMessages.style.textAlign = 'center';
+                    noMessages.style.opacity = '0.7';
+                    noMessages.style.padding = '20px';
+                    noMessages.textContent = 'لا توجد رسائل بعد. ابدأ المحادثة!';
+                    messagesContainer.appendChild(noMessages);
+                }
+
+            } catch (error) {
+                console.error('❌ خطأ في تحميل الرسائل:', error);
+            }
+        }
+
+        // وظيفة عرض الإشعارات
+        function showNotification(text, type) {
+            console.log("إشعار:", text, type);
+            notification.textContent = text;
+            notification.className = `notification ${type} show`;
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // التهيئة الأولية
+        selectDevice(1);
+        console.log("🎯 التطبيق جاهز!");
+    </script>
+</body>
+</html>
